@@ -3,64 +3,72 @@
 
 
 
+enum {
+    ADD = 0, 
+    SUB = 1, 
+    MUL = 2, 
+    DIV = 3, 
+    L_PAREN = 4,
+    R_PAREN = 5,
+    NUM = 6, 
+    END = 7 
+};
+
 
 
 /**
  * @brief check if a char is a mathematic symbol
  * @returns true if c is a symbol, false otherwise
  */
-bool isSymbol(char c) {
-    if (c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')') {
-        return true;
+int categorizeCharForMath(char c) {
+    if (c == '+') {
+        return ADD;
+    } else if (c == '-') {
+        return SUB;
+    } else if (c == '*') {
+        return MUL;
+    } else if (c == '/') {
+        return DIV;
+    } else if (c == '(') {
+        return L_PAREN;
+    } else if (c == ')') {
+        return R_PAREN;
+    } else if (isdigit(c)) {
+        return NUM;
+    } else {
+        return END;
     }
-    return false;
+    return -1;
 }
 
 /**
  * @brief takes user input and returns indexes of mathematic symbols
 */
-int getIndexOfMathSymbols(std::string input) {
+std::string parseInput(std::string input) {
     std::string result;
     for (std::string::size_type i = 0; i < input.size(); i++) {
         char c = input[i];
-        // look for char that is + - * / ( )
-        if (isSymbol(c)) {
-            // add index number to result string
-            result += std::to_string(i);
-        }
-
+        int charType = categorizeCharForMath(c);     
+        result += std::to_string(charType); 
+        
     }
-    // convert string to int and return
-    int resultInt = std::stoi(result);
-    return resultInt;
+    return result;
 }
 
-int parseInput(std::string input, int symbolIndexes) {
-    //TODO: break up String into tokens based on symbolIndexes
-    
- }
     
 
-    return -1;
-
-int exeucte() {
-    // create a REPL for a calculator
-
-    // 0. read input from user
+int execute() {
     std::string input;
     std::cout << "Enter an expression: ";
-
-    // 1. parse the input
     std::cin >> input;
-    int index = getIndexOfMathSymbols(input);
+    std::string values = parseInput(input);
 
-    printf("index: %d\n", index);
-    // 2. evaluate the input
-    // 3. print the result
-    return -1;
+    printf("input: %s\n", input);  
+    printf("value: %d\n", values.c_str());
+    return 0;
 }
 
 int main() {
-    exeucte();
+    execute();
     return 0;
 }
