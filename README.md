@@ -17,7 +17,7 @@ The simplified logic loop for the REPL shell is this:
 3. Send output of lexer to parser
 4. Send output of parser to interpreter
 5. Send output of interpreter to output
-6. repeat
+6. Repeat
 
 ### Lexer/Tokenizer
 
