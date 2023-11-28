@@ -115,18 +115,19 @@ std::vector<Token> toPostfix(const std::vector<Token>& tokens) {
                     postfix.push_back(stack.top());
                     stack.pop();
                 }
-                stack.pop();
-                break;
-            }
-            case END: { // if it's the end of the expression, pop all operators off the stack and push them to the postfix vector
-                while (!stack.empty()) {
-                    postfix.push_back(stack.top());
+                if (!stack.empty()) {
                     stack.pop();
                 }
                 break;
             }
+            default: // if it's an unexpected token, do nothing
+                break;
+            }
         }
-    }
+        while (!stack.empty()) { // if there are still operators on the stack, pop them off and push them to the postfix vector
+            postfix.push_back(stack.top());
+            stack.pop();
+    }  
     return postfix;
 }
 
@@ -184,6 +185,7 @@ void debugInfo(const std::vector<Token>& tokens, const std::vector<Token>& postf
         case NUM: printf("%f ", token.value); break;
         }
     }
+    printf("\n");
 }
     
    
