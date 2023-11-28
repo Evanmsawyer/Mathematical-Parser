@@ -87,7 +87,7 @@ std::shared_ptr<TreeNode> Parser::expr() {
         nextToken();
         std::shared_ptr<TreeNode> newNode = std::make_shared<TreeNode>(token);
         newNode->left = node;
-        node->right = term();
+        newNode->right = term();
         node = newNode;
     }
     return node;
@@ -100,7 +100,7 @@ std::shared_ptr<TreeNode> Parser::term() {
         nextToken();
         std::shared_ptr<TreeNode> newNode = std::make_shared<TreeNode>(token);
         newNode->left = node;
-        node->right = factor();
+        newNode->right = factor();
         node = newNode;
     }
     return node;
