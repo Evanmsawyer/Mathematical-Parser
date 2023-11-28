@@ -85,9 +85,10 @@ std::shared_ptr<TreeNode> Parser::expr() {
     while (currentToken.type == ADD || currentToken.type == SUB) {
         Token token = currentToken;
         nextToken();
-        node = std::make_shared<TreeNode>(token);
-        node->left = node;
+        std::shared_ptr<TreeNode> newNode = std::make_shared<TreeNode>(token);
+        newNode->left = node;
         node->right = term();
+        node = newNode;
     }
     return node;
 }
@@ -97,9 +98,10 @@ std::shared_ptr<TreeNode> Parser::term() {
     while (currentToken.type == MUL || currentToken.type == DIV) {
         Token token = currentToken;
         nextToken();
-        node = std::make_shared<TreeNode>(token);
-        node->left = node;
+        std::shared_ptr<TreeNode> newNode = std::make_shared<TreeNode>(token);
+        newNode->left = node;
         node->right = factor();
+        node = newNode;
     }
     return node;
 }
