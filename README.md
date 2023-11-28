@@ -7,7 +7,7 @@ explained in detail in the corresponding section below.
 
 ### REPL Shell
 
-The REPL (short for read, evaluate, print, repeat) shell is responsible for taking in user input, sending it to the lexer/tokenizer, sending the result from the lexer/
+The REPL (short for read evaluate print loop) shell is responsible for taking in user input, sending it to the lexer/tokenizer, sending the result from the lexer/
 tokenizer to the parser, sending the results from the parser to the interpreter, then printing the results of the interpreter for the user. It is also responsible for
 catching and printing any exceptions raised by the other components, whether those be caused by syntax errors in user input, or bugs.
 
