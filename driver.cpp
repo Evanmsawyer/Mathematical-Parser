@@ -3,6 +3,7 @@
 #include <vector>
 #include <cctype>
 #include <cstdlib>
+#include <stack>
 
 
 
@@ -82,28 +83,129 @@ std::vector<Token> tokenize(const std::string& input) {
     }
     return tokens;
 }
-   
-int main() {
-    std::string input;
-    std::cout << "Enter an expression: ";
-    std::cin >> input;
 
-    std::vector<Token> tokens = tokenize(input);
-
-    std::cout << "Tokens: ";
+/**
+ * @brief converts vector of tokens to postfix notation
+*/
+std::vector<Token> toPostfix(const std::vector<Token>& tokens) {
+    std::vector<Token> postfix;
+    std::stack<Token> stack;
 
     for (const auto& token : tokens) {
         switch (token.type) {
-            case ADD: std::cout << "+"; break;
-            case SUB: std::cout << "-"; break;
-            case MUL: std::cout << "*"; break;
-            case DIV: std::cout << "/"; break;
-            case L_PAREN: std::cout << "("; break;
-            case R_PAREN: std::cout << ")"; break;
-            case NUM: std::cout << token.value; break;
-            case END: std::cout << "END"; break;
+            case NUM: 
+                postfix.push_back(token); // if it's a number, push it to the postfix vector
+                break;
+            case ADD: 
+            case SUB: 
+            case MUL: 
+            case DIV: { // if it's an operator, pop all operators with higher precedence off the stack and push them to the postfix vector
+                while (!stack.empty() && getOrderOfOperations(stack.top().type) >= getOrderOfOperations(token.type)) { 
+                    postfix.push_back(stack.top());
+                    stack.pop();
+                }
+                stack.push(token);
+                break;
+            }
+            case L_PAREN: // if it's a left parenthesis, push it to the stack 
+                stack.push(token); 
+                break;
+            case R_PAREN: { // if it's a right parenthesis, pop all operators off the stack until we find a left parenthesis
+                while (!stack.empty() && stack.top().type != L_PAREN) {
+                    postfix.push_back(stack.top());
+                    stack.pop();
+                }
+                stack.pop();
+                break;
+            }
+            case END: { // if it's the end of the expression, pop all operators off the stack and push them to the postfix vector
+                while (!stack.empty()) {
+                    postfix.push_back(stack.top());
+                    stack.pop();
+                }
+                break;
+            }
         }
-        std::cout << ",";
+    }
+    return postfix;
+}
+
+/**
+ * @brief evaluates postfix expression
+*/
+double evaluatePostfix(const std::vector<Token>& postfix) {
+    std::stack<double> stack;
+
+    for (const auto& token : postfix) {
+        if (token.type == NUM) { // if it's a number, push it to the stack
+            stack.push(token.value);
+        } else { // if it's an operator, pop two numbers off the stack, apply the operator, and push the result back to the stack
+            double right = stack.top();
+            stack.pop();
+            double left = stack.top();
+            stack.pop();
+
+            switch (token.type) { // performs operations and pushes result to stack
+                case ADD: stack.push(left + right); break;
+                case SUB: stack.push(left - right); break;
+                case MUL: stack.push(left * right); break;
+                case DIV: stack.push(left / right); break;
+                default: break; // if unexpected operator, do nothing
+            }
+        }
+    }
+    return stack.top();
+}
+
+/**
+ * @brief FOR DEBUG -> turn this on to see the tokens and postfix notation
+*/
+void debugInfo(const std::vector<Token>& tokens, const std::vector<Token>& postfix) {
+    printf("Tokens: ");
+    for (const auto& token : tokens) {
+        switch (token.type) {
+        case ADD: printf("+ "); break;
+        case SUB: printf("- "); break;
+        case MUL: printf("* "); break;
+        case DIV: printf("/ "); break;
+        case L_PAREN: printf("( "); break;
+        case R_PAREN: printf(") "); break;
+        case NUM: printf("%f ", token.value); break;
+        case END: printf("END "); break;
+        }
+    }
+    printf("\nPostfix: ");
+    for (const auto& token : postfix) {
+        switch (token.type) {
+        case ADD: printf("+ "); break;
+        case SUB: printf("- "); break;
+        case MUL: printf("* "); break;
+        case DIV: printf("/ "); break;
+        case NUM: printf("%f ", token.value); break;
+        }
+    }
+}
+    
+   
+int main() {
+
+    bool running = true;
+
+    while (running) {
+        std::string input;
+        std::cout << "Enter an expression: ";
+        std::cin >> input;
+        std::vector<Token> tokens = tokenize(input);
+        std::vector<Token> postfix = toPostfix(tokens);
+        debugInfo(tokens, postfix);
+        double result = evaluatePostfix(postfix);
+        printf("Result: %f\n", result);
+
+        std::cout << "Continue? (y/n): ";
+        std::cin >> input;
+        running = input == "y";
     }
     return 0;
-} 
+}
+
+
