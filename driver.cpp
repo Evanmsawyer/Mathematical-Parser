@@ -166,7 +166,7 @@ double evaluate(const std::string& input) {
         std::shared_ptr<TreeNode> root = parser.parse();
         return evaluateTree(root);
     } catch (const std::exception& e) {
-        throw std::runtime_error("Invalid expression"); 
+        throw std::runtime_error("Invalid expression (" + std::string(e.what()) + ")"); 
     }
 }
 /**
