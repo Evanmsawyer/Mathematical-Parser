@@ -154,19 +154,45 @@ double evaluateTree(const std::shared_ptr<TreeNode>& node) {
         }
     }
 }
-   
-int main() {
-    std::string input;
-    std::cout << "Enter an expression: ";
-    std::getline(std::cin, input);
-
+/**
+ * @brief wraps the entire process of parsing and evaluating an expression
+ * @param input the expression to evaluate
+ * @return the result of the expression
+ * @throw std::runtime_error if the expression is invalid 
+ */
+double evaluate(const std::string& input) {
     try {
         Parser parser(input);
         std::shared_ptr<TreeNode> root = parser.parse();
-        std::cout << evaluateTree(root) << std::endl;
+        return evaluateTree(root);
     } catch (const std::exception& e) {
-        std::cout << e.what() << std::endl;
+        throw std::runtime_error("Invalid expression"); 
     }
+}
+/**
+ * @brief a shell for the user to enter expressions to evaluate
+ */
+void shell() {
+    bool isDone = false;
+    while (!isDone) {
+        std::string input;
+        std::cout << "Enter an expression: (or 'q' to quit) ";
+        std::getline(std::cin, input);
+        if (input == "q") {
+            isDone = true;
+        } else {
+            try {
+                double result = evaluate(input);
+                std::cout << "Result: " << result << std::endl;
+            } catch (const std::exception& e) {
+                std::cout << e.what() << std::endl;
+            }
+        }
+    }
+}
+   
+int main() {
+    shell();
     return 0;
 }
 
