@@ -22,7 +22,9 @@ struct Token {
     TokenType type;
     double value;
 };
-
+/**
+ * @brief a node in the expression tree. has a token and pointers to its left and right children
+*/
 struct TreeNode {
     Token token;
     std::shared_ptr<TreeNode> left;
@@ -37,6 +39,15 @@ private:
     size_t index = 0;
     Token currentToken;
 
+    /**
+     * @brief gets the next token in the input. works as follows:
+     *     1. while the current character is whitespace, increment index
+     *     2. if index is equal to the length of the input, set currentToken to {END, 0} and return
+     *     3. store the current character in curr
+     *     4. a.) if curr is a digit, store the number in number by incrementing index until the current character is not a digit, 
+     *            then set currentToken to {NUM, number}
+     *        b.) otherwise, set currentToken to the appropriate token based on curr
+    */
     void nextToken() {
         while (index < input.length() && isspace(input[index])) {
             index++;
@@ -80,6 +91,16 @@ public:
     }
 };
 
+/**
+ * @brief parses an expression, works as follows:
+ *      1. call term() and store the result in node
+ *      2. while the current token is ADD or SUB:
+ *         a. create a new node with the current token
+ *         b. call nextToken()
+ *         c. set the left child of the new node to node and the right child to term()
+ *         d. set node to the new node
+ *  @return the node, which is the root of the expression tree
+*/
 std::shared_ptr<TreeNode> Parser::expr() {
     std::shared_ptr<TreeNode> node = term();
     while (currentToken.type == ADD || currentToken.type == SUB) {
@@ -92,7 +113,16 @@ std::shared_ptr<TreeNode> Parser::expr() {
     }
     return node;
 }
-
+/**
+ * @brief parses a term, works as follows:
+ *     1. call factor() and store the result in node
+ *     2. while the current token is MUL or DIV:
+ *        a. create a new node with the current token
+ *        b. call nextToken() 
+ *        c. set the left child of the new node to node and the right child to factor()
+ *        d. set node to the new node
+ * @return the node, which is the root of the term tree
+*/
 std::shared_ptr<TreeNode> Parser::term() {
     std::shared_ptr<TreeNode> node = factor();
     while (currentToken.type == MUL || currentToken.type == DIV) {
@@ -105,7 +135,15 @@ std::shared_ptr<TreeNode> Parser::term() {
     }
     return node;
 }
-
+/**
+ * @brief parses a factor, works as follows:
+ *     1. store the current token in token
+ *     2.  a.) if the current token is a number, call nextToken() and return a new node with token as the token
+ *         b.) if the current token is a left parenthesis, call nextToken(), set node to expr(), and call nextToken() again to account for the right parenthesis
+ * 
+ * @return the node, which is the root of the factor tree
+ * @throw std::runtime_error if the current token is not a number or left parenthesis
+*/
 std::shared_ptr<TreeNode> Parser::factor() {
     Token token = currentToken;
     if (token.type == NUM) {
@@ -124,6 +162,13 @@ std::shared_ptr<TreeNode> Parser::factor() {
     }
 }
 
+/**
+ * @brief evaluates an expression tree, works as follows:
+ *    1. if node is null, return 0
+ *    2. if the token of node is a number, return the value of the token
+ *    3. if it is not a number, it is an operator, so we evaluate the left and right children by recursively calling evaluateTree()
+ *    4. depending on the operator, we return the sum, difference, product, or quotient of the left and right children
+*/
 double evaluateTree(const std::shared_ptr<TreeNode>& node) {
     if (!node) {
         return 0;
