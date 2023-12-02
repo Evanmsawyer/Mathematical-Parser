@@ -8,14 +8,7 @@
 
 
 enum TokenType {
-    ADD, 
-    SUB, 
-    MUL, 
-    DIV, 
-    L_PAREN,
-    R_PAREN,
-    NUM, 
-    END 
+    ADD, SUB, MUL, DIV, L_PAREN, R_PAREN, NUM, END 
 };
 
 struct Token {
@@ -219,16 +212,19 @@ double evaluate(const std::string& input) {
  */
 void shell() {
     bool isDone = false;
+    printf("Enter an expression to evaluate or 'q' to quit\n");
     while (!isDone) {
         std::string input;
-        std::cout << "Enter an expression: (or 'q' to quit) ";
+        std::cout << ">>> ";
         std::getline(std::cin, input);
         if (input == "q") {
             isDone = true;
+        } else if (input == "") {
+            continue;
         } else {
             try {
                 double result = evaluate(input);
-                std::cout << "Result: " << result << std::endl;
+                std::cout << result << std::endl;
             } catch (const std::exception& e) {
                 std::cout << e.what() << std::endl;
             }
