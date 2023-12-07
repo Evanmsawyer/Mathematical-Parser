@@ -11,6 +11,8 @@ namespace Parser
         TokenType type;
         double value;
     };
-    class Parser
+    class Parser {
+
+    };
 }
 #endif
