@@ -1,4 +1,4 @@
-# Mathematical-Parser
+# Mathematical Parser
 
 ## Components
 
@@ -34,7 +34,9 @@ expr := term {add term}
 add := + | -
 term := factor {mul factor}
 mul := * | /
-factor := (expr) | number
+factor := paren {expo paren}
+expo := ^
+paren := (expr) | number
 number := digit {digit}
 digit := 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 ```
@@ -43,4 +45,15 @@ still be valid.
 
 ### Interpreter
 
-The interpreter takes the parse tree from the parser as input, and evaluates it. More on this once I know how we're implementing it.
+The interpreter takes the parse tree from the parser as input and evaluates it. By evaluating both children before evaluating the parent node of the parse tree, the
+interpreter enforces PEMDAS order of operations.
+
+## Requirements
+
+To compile and run the mathematical parser, GNU's C++ compiler should be installed, as well as C++ 11 or later. This utility was designed to be used on Linux/Unix machines,
+and installation requirements/instructions will not be listed for other systems. It is recommended to also install GNU's make utility, in order to make compilation easier.
+Once both the compiler and make are installed, simply run "make" in this directory to compile the code for your machine.
+
+## Usage
+
+To invoke the utility, either run the command "./calcutil" or "make run"
