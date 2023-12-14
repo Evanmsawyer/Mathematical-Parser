@@ -102,6 +102,9 @@ private:
 
 public:
     Parser(const string& input) : input(input), index(0) { nextToken(); }
-
-    shared_ptr<TreeNode> parse() { return expr(); }
 };
+
+shared_ptr<TreeNode> parser::Parser::parse()
+{
+    return expr();
+}

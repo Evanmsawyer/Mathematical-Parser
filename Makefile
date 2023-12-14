@@ -4,14 +4,18 @@ CXX = g++ # compiler
 
 TARGET = calcutil # target executable
 
-SRC = driver.cpp # source file
-
 CXXFLAGS = -Wall -std=c++11 # compiler flags
 
 all: $(TARGET) # default target
 
-$(TARGET): $(SRC) # build target executable
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC) 
+$(TARGET): driver.o parser.o # build target executable
+	$(CXX) $(CXXFLAGS) -o $(TARGET) driver.o parser.o 
+
+driver.o: driver.cpp
+	$(CXX) $(CXXFLAGS) -c driver.cpp -o driver.o
+
+parser.o: parser.cpp parser.h
+	$(CXX) $(CXXFLAGS) -c parser.cpp -o parser.o
 
 run: $(TARGET) # run target executable
 	./$(TARGET)
