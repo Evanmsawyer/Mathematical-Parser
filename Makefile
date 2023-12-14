@@ -22,3 +22,4 @@ run: $(TARGET) # run target executable
 
 clean: # remove object files and executable
 	rm -f $(TARGET)
+	rm -f *.o

@@ -1,25 +1,28 @@
 #include "parser.h"
 
-using namespace parser;
 using namespace std;
 
-TreeNode::TreeNode(Token token) : token(token) {}
-
-class Parser
+namespace parser
 {
-private:
-    string input;
-    size_t index;
-    Token currentToken;
+    
+    Parser::Parser(const string& input) : input(input), index(0), currentToken(END)
+    {
+        nextToken(); 
+    }
 
-    void nextToken()
+    shared_ptr<TreeNode> Parser::parse()
+    {
+        return expr();
+    }
+
+    void Parser::nextToken()
     {
         while (index < input.length() && isspace(input[index]))
             index++;
 
         if (index == input.length())
         {
-            currentToken = {END};
+            currentToken = END;
             return;
         }
 
@@ -31,24 +34,24 @@ private:
                 number += input[index++];
             }
             currentToken = {NUM, stod(number)};
-        } 
+        }
         else 
         {
             switch (curr)
                 {
-                case '+': currentToken = {ADD}; break;
-                case '-': currentToken = {SUB}; break;
-                case '*': currentToken = {MUL}; break;
-                case '/': currentToken = {DIV}; break;
-                case '(': currentToken = {L_PAREN}; break;
-                case ')': currentToken = {R_PAREN}; break;
+                case '+': currentToken = ADD; break;
+                case '-': currentToken = SUB; break;
+                case '*': currentToken = MUL; break;
+                case '/': currentToken = DIV; break;
+                case '(': currentToken = L_PAREN; break;
+                case ')': currentToken = R_PAREN; break;
                 default: throw runtime_error("Invalid token");
                 }
             index++;
         }        
     }
 
-    shared_ptr<TreeNode> expr()
+    shared_ptr<TreeNode> Parser::expr()
     {
         shared_ptr<TreeNode> node = term();
         while (currentToken.type == ADD || currentToken.type == SUB) 
@@ -63,7 +66,7 @@ private:
         return node;
     }
 
-    shared_ptr<TreeNode> term()
+    shared_ptr<TreeNode> Parser::term()
     {
         shared_ptr<TreeNode> node = factor();
         while (currentToken.type == MUL || currentToken.type == DIV)
@@ -78,7 +81,7 @@ private:
         return node;
     }
 
-    shared_ptr<TreeNode> factor()
+    shared_ptr<TreeNode> Parser::factor()
     {
         Token token = currentToken;
         if (token.type == NUM)
@@ -98,13 +101,5 @@ private:
         }
         else
             throw runtime_error("Expected number or '('");
-    }
-
-public:
-    Parser(const string& input) : input(input), index(0) { nextToken(); }
-};
-
-shared_ptr<TreeNode> parser::Parser::parse()
-{
-    return expr();
+    }    
 }
