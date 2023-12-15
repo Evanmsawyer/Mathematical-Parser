@@ -20,7 +20,7 @@ namespace parser
         TokenType type;
         double value;
 
-        Token(TokenType type, double value = 0.0) : type(type), value(value) {};
+        Token(TokenType type = END, double value = 0.0) : type(type), value(value) {}
     };
 
     /**
@@ -28,12 +28,11 @@ namespace parser
     */
     struct TreeNode
     {
-        // members
         Token token;
-        shared_ptr<TreeNode> left{nullptr}, right{nullptr};
-        
-        // Constructor for the TreeNode struct
-        TreeNode(Token tok) : token(tok) {};
+        shared_ptr<TreeNode> left, right;
+
+        TreeNode(Token tok, shared_ptr<TreeNode> left = nullptr, shared_ptr<TreeNode> right = nullptr)
+            : token(tok), left(left), right(right) {}
     };
 
     class Parser

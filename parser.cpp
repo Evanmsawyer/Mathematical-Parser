@@ -37,18 +37,34 @@ namespace parser
         }
         else 
         {
-            switch (curr)
-                {
-                case '+': currentToken = ADD; break;
-                case '-': currentToken = SUB; break;
-                case '*': currentToken = MUL; break;
-                case '/': currentToken = DIV; break;
-                case '^': currentToken = EXP; break;
-                case '(': currentToken = L_PAREN; break;
-                case ')': currentToken = R_PAREN; break;
-                default: throw runtime_error("Invalid token");
-                }
-            index++;
+            char curr = input[index];
+        switch (curr) {
+            case '+': 
+                currentToken = Token(ADD); 
+                break;
+            case '-': 
+                currentToken = Token(SUB); 
+                break;
+            case '*': 
+                currentToken = Token(MUL); 
+                break;
+            case '/': 
+                currentToken = Token(DIV); 
+                break;
+            case '^': 
+                currentToken = Token(EXP); 
+                break;
+            case '(': 
+                currentToken = Token(L_PAREN); 
+                break;
+            case ')': 
+                currentToken = Token(R_PAREN); 
+                break;
+            // Handle other cases if needed
+            default: 
+                throw runtime_error("Invalid token");
+        }
+        index++;
         }        
     }
 
@@ -69,32 +85,32 @@ namespace parser
 
     shared_ptr<TreeNode> Parser::term()
     {
-        shared_ptr<TreeNode> node = factor();
+        shared_ptr<TreeNode> node = exponent();
+
         while (currentToken.type == MUL || currentToken.type == DIV)
         {
             Token token = currentToken;
             nextToken();
-            shared_ptr<TreeNode> newNode = make_shared<TreeNode>(token);
-            newNode->left = node;
-            newNode->right = factor();
+            shared_ptr<TreeNode> newNode = make_shared<TreeNode>(token, node, exponent());
             node = newNode;
         }
+
         return node;
     }
 
     shared_ptr<TreeNode> Parser::exponent()
     {
-        shared_ptr<TreeNode> node = factor();
+        shared_ptr<TreeNode> base = factor();
+
         while (currentToken.type == EXP)
         {
             Token token = currentToken;
             nextToken();
-            shared_ptr<TreeNode> newNode = make_shared<TreeNode>(token);
-            newNode->left = node;
-            newNode->right = factor(); // Recursively handle right-side exponentiation
-            node = newNode;
+            shared_ptr<TreeNode> exponentNode = exponent();
+            base = make_shared<TreeNode>(token, base, exponentNode);
         }
-        return node;
+
+        return base;
     }
 
     shared_ptr<TreeNode> Parser::factor()
@@ -108,14 +124,17 @@ namespace parser
         else if (token.type == L_PAREN)
         {
             nextToken();
-            shared_ptr<TreeNode> node = exponent(); // instead of expr()
-            if (currentToken.type != R_PAREN) {
+            shared_ptr<TreeNode> node = expr();
+            if (currentToken.type != R_PAREN) 
+            {
                 throw runtime_error("Expected ')'");
             }
             nextToken();
             return node;
         }
         else
+        {
             throw runtime_error("Expected number or '('");
-    }    
+        }
+    }  
 }
