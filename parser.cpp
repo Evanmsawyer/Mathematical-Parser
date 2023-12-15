@@ -43,6 +43,7 @@ namespace parser
                 case '-': currentToken = SUB; break;
                 case '*': currentToken = MUL; break;
                 case '/': currentToken = DIV; break;
+                case '^': currentToken = EXP; break;
                 case '(': currentToken = L_PAREN; break;
                 case ')': currentToken = R_PAREN; break;
                 default: throw runtime_error("Invalid token");
@@ -81,6 +82,21 @@ namespace parser
         return node;
     }
 
+    shared_ptr<TreeNode> Parser::exponent()
+    {
+        shared_ptr<TreeNode> node = factor();
+        while (currentToken.type == EXP)
+        {
+            Token token = currentToken;
+            nextToken();
+            shared_ptr<TreeNode> newNode = make_shared<TreeNode>(token);
+            newNode->left = node;
+            newNode->right = factor(); // Recursively handle right-side exponentiation
+            node = newNode;
+        }
+        return node;
+    }
+
     shared_ptr<TreeNode> Parser::factor()
     {
         Token token = currentToken;
@@ -92,7 +108,7 @@ namespace parser
         else if (token.type == L_PAREN)
         {
             nextToken();
-            shared_ptr<TreeNode> node = expr();
+            shared_ptr<TreeNode> node = exponent(); // instead of expr()
             if (currentToken.type != R_PAREN) {
                 throw runtime_error("Expected ')'");
             }

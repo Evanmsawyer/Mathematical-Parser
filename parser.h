@@ -12,7 +12,7 @@ namespace parser
 {
     enum TokenType
     {
-        ADD,SUB,MUL,DIV,L_PAREN,R_PAREN,NUM,END
+        ADD,SUB,MUL,DIV,EXP,L_PAREN,R_PAREN,NUM,END
     };
 
     struct Token
@@ -65,6 +65,7 @@ namespace parser
          *         d. set node to the new node
          *  @return the node, which is the root of the expression tree
         */
+
         shared_ptr<TreeNode> expr();
 
         /**
@@ -77,6 +78,13 @@ namespace parser
          *        d. set node to the new node
          * @return the node, which is the root of the term tree
         */
+        shared_ptr<TreeNode> exponent();
+         /**
+         * @brief
+         *    
+         * @return 
+        */
+
         shared_ptr<TreeNode> term();
 
         /**

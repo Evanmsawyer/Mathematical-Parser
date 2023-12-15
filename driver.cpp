@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cctype>
+#include <cmath>
 #include "parser.h"
 
 using namespace parser;
@@ -41,8 +42,9 @@ double evaluateTree(const shared_ptr<TreeNode>& node)
             case DIV: 
                 if (right == 0) 
                     throw runtime_error("Division by zero");
-
                 return left / right;
+            case EXP:
+                return pow(left, right); // handle expo
             default: throw runtime_error("Unrecognized command");
         }
     }
