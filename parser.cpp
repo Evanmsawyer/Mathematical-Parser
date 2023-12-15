@@ -20,22 +20,25 @@ namespace parser
         while (index < input.length() && isspace(input[index]))
             index++;
 
-        if (index == input.length())
-        {
+        if (index == input.length()) {
             currentToken = END;
             return;
         }
 
         char curr = input[index];
-        if (isdigit(curr))
-        {
+        if (isdigit(curr) || curr == '.') { // Check for a digit or a decimal point
             string number;
-            while (index < input.length() && isdigit(input[index])) {
+            bool decimalPointFound = false;
+
+            while (index < input.length() && (isdigit(input[index]) || (input[index] == '.' && !decimalPointFound))) {
+                if (input[index] == '.') {
+                    decimalPointFound = true; // Mark that we found a decimal point
+                }
                 number += input[index++];
             }
-            currentToken = {NUM, stod(number)};
-        }
-        else 
+
+            currentToken = {NUM, stod(number)}; 
+        }else 
         {
             char curr = input[index];
         switch (curr) {
