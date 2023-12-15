@@ -12,7 +12,7 @@ namespace parser
 {
     enum TokenType
     {
-        ADD,SUB,MUL,DIV,L_PAREN,R_PAREN,NUM,END
+        ADD,SUB,MUL,DIV,EXP,L_PAREN,R_PAREN,NUM,END
     };
 
     struct Token
@@ -20,7 +20,7 @@ namespace parser
         TokenType type;
         double value;
 
-        Token(TokenType type, double value = 0.0) : type(type), value(value) {};
+        Token(TokenType type = END, double value = 0.0) : type(type), value(value) {}
     };
 
     /**
@@ -28,12 +28,11 @@ namespace parser
     */
     struct TreeNode
     {
-        // members
         Token token;
-        shared_ptr<TreeNode> left{nullptr}, right{nullptr};
-        
-        // Constructor for the TreeNode struct
-        TreeNode(Token tok) : token(tok) {};
+        shared_ptr<TreeNode> left, right;
+
+        TreeNode(Token tok, shared_ptr<TreeNode> left = nullptr, shared_ptr<TreeNode> right = nullptr)
+            : token(tok), left(left), right(right) {}
     };
 
     class Parser
@@ -65,6 +64,7 @@ namespace parser
          *         d. set node to the new node
          *  @return the node, which is the root of the expression tree
         */
+
         shared_ptr<TreeNode> expr();
 
         /**
@@ -77,6 +77,13 @@ namespace parser
          *        d. set node to the new node
          * @return the node, which is the root of the term tree
         */
+        shared_ptr<TreeNode> exponent();
+         /**
+         * @brief
+         *    
+         * @return 
+        */
+
         shared_ptr<TreeNode> term();
 
         /**
